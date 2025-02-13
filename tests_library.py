@@ -1,7 +1,13 @@
 import biblo
 import unittest
+import sys
 
 class TestBiblo(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        print("Starting Library Checkout Tests...")
+
     def setUp(self):
         self.biblo = biblo.LibraryCheckout()
 
@@ -39,6 +45,14 @@ class TestBiblo(unittest.TestCase):
     def test_validate_membership(self):
         self.assertTrue(self.biblo.is_valid_member)
 
+    @unittest.skipUnless(sys.version_info >= (3,8), "Python version")
+    def test_calculate_late_fee(self):
+        with self.assertWarns(UserWarning):  # Start monitoring for a warning
+            self.biblo.checkout_book("A Nonexistent Book")  # This should trigger a warning
+
+    @unittest.expectedFailure
+    def test_renew_book(self):
+        self.assertTrue(self.biblo.renew_book("Spider-man"))
 
 
 
